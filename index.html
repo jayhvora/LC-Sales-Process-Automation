@@ -1,0 +1,445 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>LC Sales Process Automation</title>
+<style>
+  :root{
+    --ink:#16161a;
+    --ink-soft:#42424a;
+    --ink-faint:#7c7c86;
+    --paper:#fbfaf8;
+    --card:#ffffff;
+    --line:#e4e1dc;
+    --line-soft:#efece7;
+    --red:#e4002b;
+    --red-soft:#fbe6ea;
+    --amber:#c9821a;
+    --amber-soft:#fbf0dd;
+    --green:#1f8a52;
+    --green-soft:#e2f2e8;
+    --blue:#2b5fb3;
+    --blue-soft:#e5edf9;
+    --violet:#6c4bb0;
+    --violet-soft:#ece5f7;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html{scroll-behavior:smooth}
+  body{
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    background:var(--paper);color:var(--ink);line-height:1.55;
+    -webkit-font-smoothing:antialiased;
+  }
+  .wrap{max-width:1180px;margin:0 auto;padding:0 28px}
+
+  /* ---- Header ---- */
+  header{border-bottom:1px solid var(--line);background:var(--card)}
+  .head-inner{padding:42px 0 36px;display:flex;justify-content:space-between;align-items:flex-end;gap:24px;flex-wrap:wrap}
+  .eyebrow{font-size:12px;letter-spacing:.22em;text-transform:uppercase;color:var(--red);font-weight:700;margin-bottom:14px}
+  h1{font-size:40px;line-height:1.08;font-weight:800;letter-spacing:-.02em;max-width:680px}
+  h1 .thin{font-weight:400;color:var(--ink-soft)}
+  .head-meta{text-align:right;font-size:13.5px;color:var(--ink-faint);line-height:1.75}
+  .head-meta b{color:var(--ink);font-weight:600}
+
+  /* ---- Section frame ---- */
+  section{padding:58px 0}
+  section + section{border-top:1px solid var(--line-soft)}
+  .sec-head{display:flex;align-items:baseline;gap:16px;margin-bottom:8px}
+  .sec-num{font-size:14px;font-weight:700;color:var(--red);font-variant-numeric:tabular-nums}
+  .sec-title{font-size:25px;font-weight:700;letter-spacing:-.01em}
+  .sec-sub{color:var(--ink-soft);font-size:15.5px;max-width:760px;margin:0 0 36px 38px}
+
+  /* ---- Flow diagram ---- */
+  .flow{display:grid;grid-template-columns:1fr 1fr 1fr;gap:18px;margin-bottom:4px}
+  @media(max-width:860px){.flow{grid-template-columns:1fr}}
+  .lane{background:var(--card);border:1px solid var(--line);border-radius:14px;overflow:hidden;display:flex;flex-direction:column}
+  .lane-top{padding:18px 20px 16px;border-bottom:1px solid var(--line-soft)}
+  .lane-tag{font-size:11.5px;letter-spacing:.13em;text-transform:uppercase;font-weight:700;display:inline-block;padding:4px 11px;border-radius:20px;margin-bottom:11px}
+  .tag-ai{background:var(--violet-soft);color:var(--violet)}
+  .tag-fut{background:var(--blue-soft);color:var(--blue)}
+  .tag-org{background:var(--green-soft);color:var(--green)}
+  .lane-name{font-size:18px;font-weight:700;letter-spacing:-.01em}
+  .lane-vendor{font-size:13.5px;color:var(--ink-faint);margin-top:4px}
+  .lane-feed{font-size:14px;color:var(--ink-soft);margin-top:11px;font-weight:600}
+  .lane-feed span{font-weight:400;color:var(--ink-faint)}
+  .steps{padding:8px 20px 18px;flex:1}
+  .step{display:flex;gap:12px;padding:12px 0;border-bottom:1px dashed var(--line-soft)}
+  .step:last-child{border-bottom:none}
+  .step-n{flex:none;width:25px;height:25px;border-radius:50%;font-size:13px;font-weight:700;display:grid;place-items:center;margin-top:1px}
+  .n-ai{background:var(--violet-soft);color:var(--violet)}
+  .n-fut{background:var(--blue-soft);color:var(--blue)}
+  .n-org{background:var(--green-soft);color:var(--green)}
+  .step-txt{font-size:14.5px;color:var(--ink-soft)}
+  .step-txt b{color:var(--ink);font-weight:600}
+
+  .converge{margin-top:22px;background:var(--ink);color:#fff;border-radius:14px;padding:24px 28px;display:flex;align-items:center;gap:24px;flex-wrap:wrap}
+  .conv-arrow{font-size:24px;color:var(--red);font-weight:700}
+  .conv-main{flex:1;min-width:240px}
+  .conv-main h4{font-size:18px;font-weight:700;margin-bottom:5px}
+  .conv-main p{font-size:14.5px;color:#cdcdd4;line-height:1.6}
+  .conv-note{font-size:13px;color:#9a9aa4;border-left:2px solid var(--red);padding-left:15px;max-width:280px}
+
+  /* ---- Tracker ---- */
+  .track{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+  @media(max-width:820px){.track{grid-template-columns:1fr}}
+  .item{background:var(--card);border:1px solid var(--line);border-radius:13px;padding:22px 24px;display:flex;flex-direction:column}
+  .item-row1{display:flex;align-items:center;gap:11px;flex-wrap:wrap;margin-bottom:9px}
+  .item-name{font-size:18px;font-weight:700;letter-spacing:-.01em}
+  .pill{font-size:11.5px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;padding:3px 10px;border-radius:20px}
+  .p-live{background:var(--green-soft);color:var(--green)}
+  .p-prog{background:var(--amber-soft);color:var(--amber)}
+  .p-soon{background:var(--blue-soft);color:var(--blue)}
+  .owner{margin-left:auto;font-size:13px;color:var(--ink-faint)}
+  .owner b{color:var(--ink-soft);font-weight:600}
+  .item-desc{font-size:14.5px;color:var(--ink-soft);margin-bottom:16px}
+  .block-lbl{font-size:11px;letter-spacing:.13em;text-transform:uppercase;font-weight:700;color:var(--ink-faint);margin-bottom:11px}
+  .tl{display:flex;gap:10px;font-size:14px;color:var(--ink-soft);padding:4px 0;align-items:baseline}
+  .tl-date{flex:none;font-weight:600;color:var(--ink);min-width:92px;font-variant-numeric:tabular-nums}
+  .tl-dot{flex:none;width:8px;height:8px;border-radius:50%;background:var(--line);margin-top:7px}
+  .tl-dot.done{background:var(--green)}
+  .tl-dot.now{background:var(--amber)}
+  .tl-dot.next{background:var(--blue)}
+  .tl-body{flex:1}
+  .insight{margin-top:16px;border-top:1px solid var(--line-soft);padding-top:14px}
+  .insight p{font-size:14px;color:var(--ink-soft);line-height:1.6}
+  .insight p + p{margin-top:9px}
+  .insight .lead{font-weight:600;color:var(--ink)}
+  .focus{list-style:none;margin-top:6px}
+  .focus li{font-size:14px;color:var(--ink-soft);line-height:1.55;padding:7px 0 7px 0;border-bottom:1px dashed var(--line-soft)}
+  .focus li:last-child{border-bottom:none}
+  .focus b{color:var(--ink);font-weight:600}
+  .metric-line{font-size:13.5px;color:var(--ink-soft);margin-top:12px;background:var(--paper);border:1px dashed var(--line);border-radius:8px;padding:10px 13px}
+  .metric-line b{color:var(--red);font-weight:700}
+
+  .span2{grid-column:1 / -1}
+  .decision{background:var(--ink);color:#fff;border-radius:14px;padding:26px 30px;display:flex;align-items:center;gap:24px;flex-wrap:wrap;margin-top:4px}
+  .decision .dec-flag{font-size:12px;letter-spacing:.16em;text-transform:uppercase;color:var(--red);font-weight:700;margin-bottom:9px}
+  .decision h4{font-size:20px;font-weight:700;margin-bottom:8px;letter-spacing:-.01em}
+  .decision p{font-size:15px;color:#cdcdd4;line-height:1.6;max-width:860px}
+
+  /* ---- Impact section ---- */
+  .impact-card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:30px 34px}
+  .imp-points{display:grid;grid-template-columns:1fr 1fr;gap:20px 34px}
+  @media(max-width:820px){.imp-points{grid-template-columns:1fr}}
+  .imp-pt{display:flex;gap:15px}
+  .imp-pt-n{flex:none;width:30px;height:30px;border-radius:8px;background:var(--red-soft);color:var(--red);font-weight:700;font-size:14px;display:grid;place-items:center}
+  .imp-pt-body h5{font-size:16px;font-weight:700;margin-bottom:4px;letter-spacing:-.01em}
+  .imp-pt-body p{font-size:14.5px;color:var(--ink-soft);line-height:1.58}
+  .imp-summary{margin-top:28px;border-top:1px solid var(--line-soft);padding-top:24px;display:flex;gap:22px;align-items:center;flex-wrap:wrap}
+  .imp-summary-txt{flex:1;min-width:280px}
+  .imp-summary-txt h4{font-size:18px;font-weight:700;margin-bottom:6px;letter-spacing:-.01em}
+  .imp-summary-txt p{font-size:14.5px;color:var(--ink-soft);line-height:1.58}
+  .imp-summary-txt b{color:var(--ink);font-weight:700}
+  .imp-kpi{display:flex;gap:12px}
+  .kpi{border:1px solid var(--line);border-radius:11px;padding:16px 20px;text-align:center;background:var(--paper)}
+  .kpi-val{font-size:30px;font-weight:800;color:var(--red);letter-spacing:-.02em;line-height:1}
+  .kpi-lbl{font-size:12px;color:var(--ink-faint);margin-top:6px;font-weight:600;letter-spacing:.02em}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="wrap head-inner">
+    <div>
+      <div class="eyebrow">Learning Centres · Offline Business Unit</div>
+      <h1>LC Sales : Process Automation <span class="thin"></span></h1>
+    </div>
+    <div class="head-meta">
+      <div>Status as of <b>9 June 2026</b></div>
+      <div>Owner : <b>Jay</b> : Central Ops</div>
+      <div>For <b>Manish</b></div>
+    </div>
+  </div>
+</header>
+
+<!-- ===== SECTION 1: LEAD FLOW ===== -->
+<section>
+  <div class="wrap">
+    <div class="sec-head">
+      <span class="sec-num">01</span>
+      <span class="sec-title">How leads flow into the centres</span>
+    </div>
+    <p class="sec-sub">Three qualification funnels feed the same destination: the centre sales team. AI revives our aged inventory, Futworks pre-filters fresh paid leads, and high-intent organic leads route straight through. Every interaction lands in LSQ before sales picks it up.</p>
+
+    <div class="flow">
+      <!-- AI -->
+      <div class="lane">
+        <div class="lane-top">
+          <span class="lane-tag tag-ai">Funnel A : Reactivation</span>
+          <div class="lane-name">AI Lead Churning</div>
+          <div class="lane-vendor">Avataar + Arrowhead bots</div>
+          <div class="lane-feed">Works on <span>aged leads, 4 to 6 months old</span></div>
+        </div>
+        <div class="steps">
+          <div class="step"><div class="step-n n-ai">1</div><div class="step-txt"><b>Aged pool selected</b>, fresh leads untouched</div></div>
+          <div class="step"><div class="step-n n-ai">2</div><div class="step-txt"><b>Bot calls repeatedly</b> across days until connect</div></div>
+          <div class="step"><div class="step-n n-ai">3</div><div class="step-txt"><b>Qualifies on connect</b>: grad, work-ex, program</div></div>
+          <div class="step"><div class="step-n n-ai">4</div><div class="step-txt"><b>Nudges a walk-in</b> at nearest centre</div></div>
+          <div class="step"><div class="step-n n-ai">5</div><div class="step-txt"><b>Hands warm lead to sales</b>, logs to LSQ</div></div>
+        </div>
+      </div>
+
+      <!-- FUTWORKS -->
+      <div class="lane">
+        <div class="lane-top">
+          <span class="lane-tag tag-fut">Funnel B : Qualification</span>
+          <div class="lane-name">Futworks</div>
+          <div class="lane-vendor">5 human agents : EN / HI / KN</div>
+          <div class="lane-feed">Works on <span>fresh Meta and Internshala leads</span></div>
+        </div>
+        <div class="steps">
+          <div class="step"><div class="step-n n-fut">1</div><div class="step-txt"><b>Lead drops in LSQ</b>, auto-push to Futworks CRM</div></div>
+          <div class="step"><div class="step-n n-fut">2</div><div class="step-txt"><b>Agent qualifies</b>: grad+year, program, end goal</div></div>
+          <div class="step"><div class="step-n n-fut">3</div><div class="step-txt"><b>Auto-routes to centre</b> by learner location</div></div>
+          <div class="step"><div class="step-n n-fut">4</div><div class="step-txt"><b>Counsellor books</b> video call or walk-in</div></div>
+          <div class="step"><div class="step-n n-fut">5</div><div class="step-txt"><b>Payment and close</b> at the centre</div></div>
+        </div>
+      </div>
+
+      <!-- ORGANIC -->
+      <div class="lane">
+        <div class="lane-top">
+          <span class="lane-tag tag-org">Funnel C : Direct</span>
+          <div class="lane-name">Organic and High-Intent</div>
+          <div class="lane-vendor">Centre sales team, end to end</div>
+          <div class="lane-feed">Works on <span>Google, website, referral, walk-in</span></div>
+        </div>
+        <div class="steps">
+          <div class="step"><div class="step-n n-org">1</div><div class="step-txt"><b>Lead flows direct</b> to the centre, no vendor layer</div></div>
+          <div class="step"><div class="step-n n-org">2</div><div class="step-txt"><b>Treated as high intent</b>, call immediately</div></div>
+          <div class="step"><div class="step-n n-org">3</div><div class="step-txt"><b>Counsellor owns</b> qualification end to end</div></div>
+          <div class="step"><div class="step-n n-org">4</div><div class="step-txt"><b>Counsels and invites</b>: walk-in or VC</div></div>
+          <div class="step"><div class="step-n n-org">5</div><div class="step-txt"><b>Conversion and close</b> in-centre</div></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="converge">
+      <span class="conv-arrow">↓</span>
+      <div class="conv-main">
+        <h4>All three converge on the centre sales team</h4>
+        <p>Reactivated, pre-qualified and direct leads all land with admission counsellors who run counselling, walk-in / VC and closure, governed by the Best Practices flow in Section 02.</p>
+      </div>
+      <div class="conv-note">LSQ activity notes are the single handoff record. Sales reads the AI / Futworks log before every first call.</div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== SECTION 2: TRACKER ===== -->
+<section>
+  <div class="wrap">
+    <div class="sec-head">
+      <span class="sec-num">02</span>
+      <span class="sec-title">Project tracker : workstreams and timelines</span>
+    </div>
+    <p class="sec-sub">Six parallel workstreams across automation, quality and ground operations, each with milestone-level status. Colour marks progress: green is done, amber is in progress, blue is upcoming.</p>
+
+    <div class="track">
+
+      <!-- 1 AI BOT -->
+      <div class="item">
+        <div class="item-row1">
+          <span class="item-name">AI Calling Bot : Avataar / Arrowhead</span>
+          <span class="pill p-prog">In progress</span>
+          <span class="owner">Owner : <b>Pradnesh</b></span>
+        </div>
+        <p class="item-desc">Bot training and two-way CRM integration for the PoC to churn aged leads. Both vendors get the same pan-India lead quality, so L2Q is directly comparable and decides the winner.</p>
+        <div class="block-lbl">Timeline</div>
+        <div class="tl"><span class="tl-dot done"></span><span class="tl-date">11 to 15 May</span><span class="tl-body">Requirement gathering, collate PoC ideas</span></div>
+        <div class="tl"><span class="tl-dot done"></span><span class="tl-date">18 May on</span><span class="tl-body">Requirements to dev team: two tracks, bot training and LSQ to vendor CRM integrations</span></div>
+        <div class="tl"><span class="tl-dot done"></span><span class="tl-date">25 to 29 May</span><span class="tl-body">First manual lead passage to vendors for churn</span></div>
+        <div class="tl"><span class="tl-dot done"></span><span class="tl-date">1 to 5 Jun</span><span class="tl-body">Payment-issue roadblocks, now cleared by the central LSQ team</span></div>
+        <div class="tl"><span class="tl-dot done"></span><span class="tl-date">8 Jun</span><span class="tl-body">Arrowhead integration closed</span></div>
+        <div class="tl"><span class="tl-dot done"></span><span class="tl-date">10 Jun</span><span class="tl-body">Avataar integration closed, both bots trained and live</span></div>
+        <div class="tl"><span class="tl-dot now"></span><span class="tl-date">12 Jun</span><span class="tl-body">Start rigorous calling, equal lead volumes across both vendors</span></div>
+        <div class="tl"><span class="tl-dot next"></span><span class="tl-date">End Jun</span><span class="tl-body">Test window closes, finalise winning bot on L2Q percentage</span></div>
+        <div class="metric-line">Tracking metric : <b>leads passed vs leads qualified (L2Q %)</b>, same lead quality to both vendors makes the better performer clear.</div>
+      </div>
+
+      <!-- 2 FUTWORKS -->
+      <div class="item">
+        <div class="item-row1">
+          <span class="item-name">Futworks : Human Qualification</span>
+          <span class="pill p-prog">In progress</span>
+          <span class="owner">Owner : <b>Jay</b></span>
+        </div>
+        <p class="item-desc">Human calling on fresh Meta and Internshala leads, in parallel to the AI funnel. 5 agents across English, Hindi and Kannada. Qualified leads auto-route to the nearest centre.</p>
+        <div class="block-lbl">Timeline</div>
+        <div class="tl"><span class="tl-dot done"></span><span class="tl-date">20 May</span><span class="tl-body">Requirement gathering</span></div>
+        <div class="tl"><span class="tl-dot done"></span><span class="tl-date">21 to 22 May</span><span class="tl-body">Intro and approvals in place</span></div>
+        <div class="tl"><span class="tl-dot done"></span><span class="tl-date">25 May on</span><span class="tl-body">Agent hiring initiated on Futworks end</span></div>
+        <div class="tl"><span class="tl-dot done"></span><span class="tl-date">29 May</span><span class="tl-body">All hiring closed</span></div>
+        <div class="tl"><span class="tl-dot done"></span><span class="tl-date">1 to 5 Jun</span><span class="tl-body">Agent training by Futworks, plus 3 dedicated upGrad sessions (3, 4, 5 Jun) with mock calls to test efficacy</span></div>
+        <div class="tl"><span class="tl-dot now"></span><span class="tl-date">Jun, wk 1 on</span><span class="tl-body">Tech integrations underway, expected to close by 12 Jun</span></div>
+        <div class="tl"><span class="tl-dot next"></span><span class="tl-date">12 Jun</span><span class="tl-body">Integrations and hiring complete, agents begin calling, qualifying and passing leads to centres</span></div>
+        <div class="tl"><span class="tl-dot next"></span><span class="tl-date">Mid to end Sep</span><span class="tl-body">Continue through high season, then cost-benefit analysis: finalised AI bot vs Futworks on ROI</span></div>
+      </div>
+
+      <!-- DECISION BAND -->
+      <div class="span2">
+        <div class="decision">
+          <div>
+            <div class="dec-flag">Roadmap : the long-term call</div>
+            <h4>By September 2026, we finalise a single lead qualification tool</h4>
+            <p>Whether AI or human, the decision rests on our own results. Early studies point to AI being more cost-effective and scalable in the long run. Once the data is in, we finalise the winning tool and embed it into the automated sales process for the long term.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- 3 BEST PRACTICES -->
+      <div class="item">
+        <div class="item-row1">
+          <span class="item-name">Sales Best Practices and Training</span>
+          <span class="pill p-live">Live</span>
+          <span class="owner">Owner : <b>Mayank / Aditi</b></span>
+        </div>
+        <p class="item-desc">A 48-point best practices flow live across the full lead journey. Marketing shares collateral, Amit / Imtiaz cascade and enforce on ground, with multiple training rounds running.</p>
+        <div class="block-lbl">Timeline</div>
+        <div class="tl"><span class="tl-dot done"></span><span class="tl-date">9 May</span><span class="tl-body">Best practices live</span></div>
+        <div class="tl"><span class="tl-dot done"></span><span class="tl-date">13 May</span><span class="tl-body">Training initiated</span></div>
+        <div class="tl"><span class="tl-dot done"></span><span class="tl-date">14 May</span><span class="tl-body">Collateral communications cascaded</span></div>
+        <div class="tl"><span class="tl-dot now"></span><span class="tl-date">25 May to 10 Jun</span><span class="tl-body">Refreshers and retraining rounds</span></div>
+        <div class="insight">
+          <p class="lead">What the flow covers</p>
+          <p>A complete learner journey playbook from lead drop to registration: the Golden Rule of Understand, Reflect, Counsel, Invite, Close, anchored on the 6 Cs mindset. It standardises first-call openings and probing, a structured DNP and follow-up cadence, objection handling, walk-in and video-call counselling, and enrolment closure.</p>
+          <p>The intent is to shift ACs perspective from telecallers to consultative selling, where learner success is prioritised and the habits of the best ACs become everyone's baseline. The companion Lead Nurture Flow maps the parallel connected and DNP paths, with the right WhatsApp collateral at every stage.</p>
+        </div>
+      </div>
+
+      <!-- 4 QA -->
+      <div class="item">
+        <div class="item-row1">
+          <span class="item-name">QA Auditing</span>
+          <span class="pill p-prog">In progress</span>
+          <span class="owner">Owner : <b>Jay</b></span>
+        </div>
+        <p class="item-desc">A dedicated QA function for LC that audits the learner journey, sales practices and CRM hygiene, and works 1:1 with ACs to instil discipline and consistency.</p>
+        <div class="block-lbl">Timeline</div>
+        <div class="tl"><span class="tl-dot done"></span><span class="tl-date">19 May</span><span class="tl-body">Request raised to the quality team</span></div>
+        <div class="tl"><span class="tl-dot done"></span><span class="tl-date">1 Jun</span><span class="tl-body">First QA member hired and started training</span></div>
+        <div class="tl"><span class="tl-dot now"></span><span class="tl-date">15 Jun</span><span class="tl-body">Second hire about to close, parallel thread initiated</span></div>
+        <div class="insight">
+          <p class="lead">Audit scope : four focus areas</p>
+          <ul class="focus">
+            <li><b>Learner journey audits :</b> all outreach via Ameyo plus WhatsApp collateral, accurate info per training, genuinely consultative counselling, walk-ins actively encouraged.</li>
+            <li><b>CRM hygiene :</b> every call, video call, walk-in and WhatsApp follow-up logged accurately and promptly in LSQ. No missing entries.</li>
+            <li><b>VC recordings and call logs :</b> all video calls recorded and logged, non-negotiable. Personal-phone or WhatsApp calls backed by screenshots and proofs in CRM.</li>
+            <li><b>Quality of communication :</b> right information at the right time, referrers pitched on the tool, no counselling shortcuts. Pre-sales experience drives post-enrolment success and retention.</li>
+          </ul>
+          <p>Recorded lines are the starting point for discipline and meaningful audits. QA spends 1:1 time with ACs through ongoing sessions, and we iterate the process from there.</p>
+        </div>
+      </div>
+
+      <!-- 5 WHATSAPP -->
+      <div class="item">
+        <div class="item-row1">
+          <span class="item-name">WhatsApp Automation : Serri</span>
+          <span class="pill p-prog">In progress</span>
+          <span class="owner">Owner : <b>Pradnesh</b></span>
+        </div>
+        <p class="item-desc">Centralised, automated WhatsApp messaging triggered as a lead moves through its journey, from welcome at lead drop to placement stories and re-engagement nudges on knocked-off leads.</p>
+        <div class="block-lbl">Timeline</div>
+        <div class="tl"><span class="tl-dot done"></span><span class="tl-date">Mid-May on</span><span class="tl-body">Integration work in progress</span></div>
+        <div class="tl"><span class="tl-dot done"></span><span class="tl-date">5 Jun</span><span class="tl-body">Integration completed</span></div>
+        <div class="tl"><span class="tl-dot now"></span><span class="tl-date">Jun, full month</span><span class="tl-body">Testing phase: welcome and expect-a-call messages, counselling nudges, placement success stories, re-engagement on not-interested leads</span></div>
+        <div class="tl"><span class="tl-dot next"></span><span class="tl-date">Jul</span><span class="tl-body">Decide: decentralise, or continue as a one-way centralised channel. Early studies favour centralised, more academically professional, as with Masai's model</span></div>
+      </div>
+
+      <!-- 6 INBOUND -->
+      <div class="item">
+        <div class="item-row1">
+          <span class="item-name">Inbound Call Tracking : Callyzer</span>
+          <span class="pill p-prog">In progress</span>
+          <span class="owner">Owner : <b>Pragati</b></span>
+        </div>
+        <p class="item-desc">Recorded, tracked inbound lines for CMs to quantify inbound call volume that today goes uncounted, giving us visibility on a lead source we currently cannot see.</p>
+        <div class="block-lbl">Timeline</div>
+        <div class="tl"><span class="tl-dot done"></span><span class="tl-date">25 May</span><span class="tl-body">Requirement gathering</span></div>
+        <div class="tl"><span class="tl-dot done"></span><span class="tl-date">27 May</span><span class="tl-body">Approvals captured, process initiated</span></div>
+        <div class="tl"><span class="tl-dot now"></span><span class="tl-date">Now</span><span class="tl-body">3 of 10 centres live</span></div>
+        <div class="tl"><span class="tl-dot next"></span><span class="tl-date">22 Jun</span><span class="tl-body">Remaining centres live, as handsets are delivered to respective centres</span></div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ===== SECTION 3: IMPACT ===== -->
+<section>
+  <div class="wrap">
+    <div class="sec-head">
+      <span class="sec-num">03</span>
+      <span class="sec-title">Impact from automation and centralisation</span>
+    </div>
+    <p class="sec-sub">What the six initiatives add up to, and the single number they are all built to move.</p>
+
+    <div class="impact-card">
+      <div class="imp-points">
+
+        <div class="imp-pt">
+          <div class="imp-pt-n">1</div>
+          <div class="imp-pt-body">
+            <h5>AI Calling</h5>
+            <p>Brings in revenue from the not-joined leads by reactivating dormant inventory, so recovered revenue from old leads goes up.</p>
+          </div>
+        </div>
+
+        <div class="imp-pt">
+          <div class="imp-pt-n">2</div>
+          <div class="imp-pt-body">
+            <h5>Futworks Qualification</h5>
+            <p>Frees up agent bandwidth for more productive work. As outsourced calling filters the noise, ACs engage in more qualitative conversations.</p>
+          </div>
+        </div>
+
+        <div class="imp-pt">
+          <div class="imp-pt-n">3</div>
+          <div class="imp-pt-body">
+            <h5>Sales Best Practices</h5>
+            <p>Trains in the highest and best practices observed across agents, and passes that knowledge across all centres.</p>
+          </div>
+        </div>
+
+        <div class="imp-pt">
+          <div class="imp-pt-n">4</div>
+          <div class="imp-pt-body">
+            <h5>QA Audits</h5>
+            <p>The most important impact. Over the next 3 to 5 months it brings standardisation to a decentralised business, maintaining pre-sales nurturing quality and instilling discipline.</p>
+          </div>
+        </div>
+
+        <div class="imp-pt">
+          <div class="imp-pt-n">5</div>
+          <div class="imp-pt-body">
+            <h5>WhatsApp Automation</h5>
+            <p>Improves learner engagement through the pre-sales journey with consistent, timely messaging.</p>
+          </div>
+        </div>
+
+        <div class="imp-pt">
+          <div class="imp-pt-n">6</div>
+          <div class="imp-pt-body">
+            <h5>Inbound Call Tracking</h5>
+            <p>Gives insight on inbound volume across stores, and how branding and store-level experiments shift inbound call volume pan-India.</p>
+          </div>
+        </div>
+
+      </div>
+
+      <div class="imp-summary">
+        <div class="imp-summary-txt">
+          <h4>Net-net : more revenue from the same leads</h4>
+          <p>Across all these projects, the aim is to improve the lead-to-counsel ratio (<b>L2C by 30%</b>), which translates into a <b>30% lift in L2P</b> (lead to payment), pulling more revenue from the same volume of leads we already generate.</p>
+        </div>
+        <div class="imp-kpi">
+          <div class="kpi"><div class="kpi-val">+30%</div><div class="kpi-lbl">L2C</div></div>
+          <div class="kpi"><div class="kpi-val">+30%</div><div class="kpi-lbl">L2P</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+</body>
+</html>
